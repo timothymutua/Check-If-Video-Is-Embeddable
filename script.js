@@ -1,15 +1,27 @@
-import requests
+document.getElementById('checkButton').addEventListener('click', function() {
+    const videoId = document.getElementById('videoId').value;
+    const resultElement = document.getElementById('result');
 
-def is_youtube_video_embeddable(api_key, video_id):
-    url = f"https://www.googleapis.com/youtube/v3/videos?id={video_id}&part=status&key={api_key}"
-    response = requests.get(url)
-    data = response.json()
-    if 'items' in data and len(data['items']) > 0:
-        return data['items'][0]['status']['embeddable']
-    return False
+    if (!videoId) {
+        resultElement.innerHTML = '<p style="color: red;">Please enter a YouTube Video ID.</p>';
+        return;
+    }
 
-# Usage
-api_key = 'YOUR_YOUTUBE_API_KEY'
-video_id = 'VIDEO_ID'
-embeddable = is_youtube_video_embeddable(api_key, video_id)
-print(f"Video embeddable: {embeddable}")
+    // Clear previous result
+    resultElement.innerHTML = '';
+
+    // Create iframe to check embeddability
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube.com/embed/${videoId}`;
+    iframe.width = '560';
+    iframe.height = '315';
+    iframe.onload = function() {
+        resultElement.innerHTML = '<p style="color: green;">The video is embeddable.</p>';
+    };
+    iframe.onerror = function() {
+        resultElement.innerHTML = '<p style="color: red;">The video is not embeddable.</p>';
+    };
+
+    // Append iframe to result element
+    resultElement.appendChild(iframe);
+});
